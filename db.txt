@@ -1,0 +1,87 @@
+CREATE DATABASE system_ut;
+USE system_ut;
+
+-- 🔄 LIMPIEZA PREVIA (si ya existen)
+DROP TABLE IF EXISTS memorandos;
+DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS areas;
+
+-- 👤 Tabla de Usuarios
+CREATE TABLE usuarios (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  nombre_completo VARCHAR(100) NOT NULL,
+  cargo VARCHAR(100),
+  correo VARCHAR(255) UNIQUE NOT NULL,
+  contraseña_hash VARCHAR(255) NOT NULL,
+  rol ENUM('admin', 'usuario') NOT NULL DEFAULT 'usuario',
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 🏢 Tabla de Áreas
+CREATE TABLE areas (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  nombre VARCHAR(100) NOT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 📨 Tabla de Memorandos (ordenada según la imagen y optimizada)
+CREATE TABLE memorandos (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+  -- 🧾 Apartado de Entradas
+  folio VARCHAR(50) UNIQUE NOT NULL,                           -- No. de Oficio y/o documentos
+  fecha_recepcion TIMESTAMP,                                   -- Fecha y hora de recepción
+  entidad_productora VARCHAR(255),                             -- Entidad Productora (opcional)
+  remitente_id BIGINT NOT NULL,                                -- Usuario remitente
+  fecha_documento DATE,                                        -- Fecha del Documento
+  contenido TEXT NOT NULL,                                     -- Extracto / contenido del archivo
+  destinatario_id BIGINT,                                      -- Usuario destinatario
+  urgencia ENUM('urgente', 'ordinario') DEFAULT 'ordinario',   -- Urgencia
+  documento_blob LONGBLOB,                                     -- Archivo adjunto (anexo)
+
+  -- 📤 Apartado de Salidas
+  area_destino_id BIGINT,                                      -- Área destino
+  fecha_recepcion_destino TIMESTAMP,                           -- Fecha recepción en destino
+  fecha_requerida_respuesta DATE,                              -- Fecha requerida de respuesta
+  estatus_atencion ENUM('pendiente', 'proceso', 'atendido') DEFAULT 'pendiente',
+  fecha_limite DATE,                                           -- Fecha límite (opcional)
+  fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,          -- Fecha de creación del registro
+  fecha_resolucion_final DATE,                                 -- Fecha de resolución final
+
+  area_id BIGINT NOT NULL,                                     -- Área de origen
+
+  FOREIGN KEY (remitente_id) REFERENCES usuarios(id),
+  FOREIGN KEY (destinatario_id) REFERENCES usuarios(id),
+  FOREIGN KEY (area_id) REFERENCES areas(id),
+  FOREIGN KEY (area_destino_id) REFERENCES areas(id)
+);
+
+-- 🧪 Inserciones de prueba
+
+-- Áreas
+INSERT INTO areas (nombre) VALUES 
+('Dirección General'), 
+('Recursos Humanos'), 
+('Finanzas'), 
+('Informática');
+
+-- Usuarios
+INSERT INTO usuarios (nombre_completo, cargo, correo, contraseña_hash, rol) VALUES 
+('Ana Martínez', 'Directora General', 'ana@empresa.com', 'hash_ana123', 'admin'),
+('Carlos López', 'Jefe de Recursos Humanos', 'carlos@empresa.com', 'hash_carlos123', 'usuario'),
+('Luisa Gómez', 'Analista Financiera', 'luisa@empresa.com', 'hash_luisa123', 'usuario'),
+('Pedro Sánchez', 'Técnico de Sistemas', 'pedro@empresa.com', 'hash_pedro123', 'usuario');
+
+-- Memorando de ejemplo
+INSERT INTO memorandos (
+  folio, fecha_recepcion, entidad_productora, remitente_id, fecha_documento,
+  contenido, destinatario_id, urgencia, area_destino_id, fecha_recepcion_destino,
+  fecha_requerida_respuesta, estatus_atencion, fecha_limite, fecha_resolucion_final,
+  area_id
+) VALUES (
+  'OF-001-2025', '2025-06-10 09:30:00', 'Dirección General', 1, '2025-06-09',
+  'Se solicita revisión de políticas internas para el área de RRHH.',
+  2, 'urgente', 2, '2025-06-10 11:00:00',
+  '2025-06-14', 'pendiente', '2025-06-15', NULL,
+  1
+);

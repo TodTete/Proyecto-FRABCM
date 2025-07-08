@@ -289,6 +289,7 @@ else {
     <head>
         <meta charset='UTF-8'>
         <title>Página no encontrada - UTTECAM</title>
+        <link rel='icon' href='/project/public/images/logo.ico' type='image/x-icon'>
         <style>
             body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
             .error-container { max-width: 500px; margin: 0 auto; }

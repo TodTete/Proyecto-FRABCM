@@ -231,20 +231,6 @@ ob_start();
     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
-.destinatarios-details {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border-left: 3px solid #4a7c59;
-    display: none;
-}
-
-.destinatarios-details.show {
-    display: block;
-    animation: slideDown 0.3s ease-out;
-}
-
 .destinatario-item {
     display: flex;
     justify-content: space-between;
@@ -583,9 +569,7 @@ ob_start();
                         <a href="<?php echo $base_url; ?>/editar-documento/<?php echo $doc['id']; ?>" class="btn-sm btn-edit">
                             <i class="fas fa-edit"></i> Editar
                         </a>
-                        <button class="btn-sm btn-details" onclick="toggleDestinatarios(<?php echo $doc['id']; ?>)">
-                            <i class="fas fa-users"></i> Ver Destinatarios
-                        </button>
+
                         <?php if ($doc['documento_blob']): ?>
                             <button class="btn-sm btn-view" onclick="abrirModalPDF(<?php echo $doc['id']; ?>, '<?php echo htmlspecialchars($doc['folio']); ?>')">
                                 <i class="fas fa-eye"></i> Ver PDF
@@ -593,12 +577,6 @@ ob_start();
                         <?php endif; ?>
                     </div>
                     
-                    <div class="destinatarios-details" id="destinatarios-<?php echo $doc['id']; ?>">
-                        <h4><i class="fas fa-users"></i> Destinatarios y Estado</h4>
-                        <div id="destinatarios-list-<?php echo $doc['id']; ?>">
-                            <!-- Se carga dinámicamente -->
-                        </div>
-                    </div>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -623,53 +601,6 @@ ob_start();
 </div>
 
 <script>
-function toggleDestinatarios(documentoId) {
-    const details = document.getElementById(`destinatarios-${documentoId}`);
-    const list = document.getElementById(`destinatarios-list-${documentoId}`);
-    
-    if (details.classList.contains('show')) {
-        details.classList.remove('show');
-    } else {
-        // Cargar destinatarios si no están cargados
-        if (list.innerHTML.trim() === '') {
-            cargarDestinatarios(documentoId);
-        }
-        details.classList.add('show');
-    }
-}
-
-function cargarDestinatarios(documentoId) {
-    fetch(`<?php echo $base_url; ?>/api/destinatarios-documento/${documentoId}`)
-        .then(response => response.json())
-        .then(data => {
-            const list = document.getElementById(`destinatarios-list-${documentoId}`);
-            if (data.success && data.destinatarios.length > 0) {
-                list.innerHTML = data.destinatarios.map(dest => `
-                    <div class="destinatario-item">
-                        <div class="destinatario-info">
-                            <div class="destinatario-avatar">
-                                ${dest.nombre.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <strong>${dest.nombre}</strong><br>
-                                <small>${dest.correo}</small>
-                            </div>
-                        </div>
-                        <span class="destinatario-estatus estatus-${dest.estatus}">
-                            <i class="fas fa-${dest.estatus === 'atendido' ? 'check' : dest.estatus === 'proceso' ? 'spinner' : 'clock'}"></i>
-                            ${dest.estatus.charAt(0).toUpperCase() + dest.estatus.slice(1)}
-                        </span>
-                    </div>
-                `).join('');
-            } else {
-                list.innerHTML = '<p>No hay destinatarios asignados.</p>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById(`destinatarios-list-${documentoId}`).innerHTML = '<p>Error al cargar destinatarios.</p>';
-        });
-}
 
 function abrirModalPDF(documentoId, folio) {
     const modal = document.getElementById('pdfModal');

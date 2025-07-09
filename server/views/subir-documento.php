@@ -154,6 +154,58 @@ ob_start();
     font-weight: bold;
 }
 
+/* Estilos para áreas personalizadas */
+.area-container {
+    position: relative;
+}
+
+.area-custom-input {
+    display: none;
+    margin-top: 0.5rem;
+}
+
+.area-custom-input.show {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #4a7c59;
+    margin: 1rem 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #4a7c59;
+}
+
+.checkbox-label {
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
     .urgencia-options {
         flex-direction: column;
@@ -223,26 +275,40 @@ ob_start();
             <div class="form-row">
                 <div class="form-group">
                     <label for="area_id"><i class="fas fa-sitemap"></i> Área de Origen *</label>
-                    <select id="area_id" name="area_id" class="form-select" required>
-                        <option value="">Seleccionar área</option>
-                        <?php foreach ($areas as $area): ?>
-                            <option value="<?php echo $area['id']; ?>">
-                                <?php echo htmlspecialchars($area['nombre']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="area-container">
+                        <select id="area_id" name="area_id" class="form-select" required onchange="toggleAreaCustom('origen')">
+                            <option value="">Seleccionar área</option>
+                            <?php foreach ($areas as $area): ?>
+                                <option value="<?php echo $area['id']; ?>">
+                                    <?php echo htmlspecialchars($area['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="otro">🖊️ Otro (Escribir área personalizada)</option>
+                        </select>
+                        <div class="area-custom-input" id="area_origen_custom">
+                            <input type="text" name="area_origen_custom" class="form-input" 
+                                   placeholder="Escriba el nombre del área de origen">
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="area_destino_id"><i class="fas fa-arrow-right"></i> Área Destino *</label>
-                    <select id="area_destino_id" name="area_destino_id" class="form-select" required>
-                        <option value="">Seleccionar área destino</option>
-                        <?php foreach ($areas as $area): ?>
-                            <option value="<?php echo $area['id']; ?>">
-                                <?php echo htmlspecialchars($area['nombre']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <div class="area-container">
+                        <select id="area_destino_id" name="area_destino_id" class="form-select" required onchange="toggleAreaCustom('destino')">
+                            <option value="">Seleccionar área destino</option>
+                            <?php foreach ($areas as $area): ?>
+                                <option value="<?php echo $area['id']; ?>">
+                                    <?php echo htmlspecialchars($area['nombre']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="otro">🖊️ Otro (Escribir área personalizada)</option>
+                        </select>
+                        <div class="area-custom-input" id="area_destino_custom">
+                            <input type="text" name="area_destino_custom" class="form-input" 
+                                   placeholder="Escriba el nombre del área destino">
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -283,6 +349,7 @@ ob_start();
                 </div>
             </div>
             
+       
             <button type="submit" class="btn-submit">
                 <i class="fas fa-paper-plane"></i> Enviar Documento
             </button>
@@ -330,6 +397,20 @@ function removeUser(checkboxId) {
     const checkbox = document.getElementById(checkboxId);
     checkbox.checked = false;
     updateSelectedUsers();
+}
+
+function toggleAreaCustom(tipo) {
+    const select = document.getElementById(`area_${tipo === 'origen' ? 'id' : 'destino_id'}`);
+    const customInput = document.getElementById(`area_${tipo}_custom`);
+    
+    if (select.value === 'otro') {
+        customInput.classList.add('show');
+        customInput.querySelector('input').required = true;
+    } else {
+        customInput.classList.remove('show');
+        customInput.querySelector('input').required = false;
+        customInput.querySelector('input').value = '';
+    }
 }
 
 // Cerrar dropdown al hacer clic fuera

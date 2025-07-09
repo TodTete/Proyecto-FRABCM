@@ -217,6 +217,20 @@ else if (preg_match('/^\/descargar-pdf\/(\d+)$/', $route, $matches)) {
     }
     exit();
 }
+// Ruta para actualizar perfil
+else if ($route === '/actualizar-perfil' && $method === 'POST') {
+    AuthMiddleware::requireAuth();
+    require_once __DIR__ . '/../server/controllers/ProfileController.php';
+    $controller = new ProfileController();
+    $resultado = $controller->actualizarPerfil();
+    
+    if (isset($resultado['success'])) {
+        header('Location: ' . BASE_URL . '/dashboard?success=' . urlencode('Perfil actualizado exitosamente'));
+    } else {
+        header('Location: ' . BASE_URL . '/dashboard?error=' . urlencode($resultado['error']));
+    }
+    exit();
+}
 // Agregar rutas para manejar las notificaciones:
 else if ($route === '/marcar-notificacion-leida' && $method === 'POST') {
     AuthMiddleware::requireAuth();
@@ -289,7 +303,6 @@ else {
     <head>
         <meta charset='UTF-8'>
         <title>Página no encontrada - UTTECAM</title>
-        <link rel='icon' href='/project/public/images/logo.ico' type='image/x-icon'>
         <style>
             body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
             .error-container { max-width: 500px; margin: 0 auto; }

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
+require_once __DIR__ . '/../utils/EmailService.php';
 
 class DocumentController {
     
@@ -271,6 +272,19 @@ class DocumentController {
         }
     }
     
+    public function crearAreaPersonalizada($nombre) {
+        global $pdo;
+        
+        try {
+            $stmt = $pdo->prepare("INSERT INTO areas (nombre) VALUES (?)");
+            $stmt->execute([$nombre]);
+            return $pdo->lastInsertId();
+        } catch (Exception $e) {
+            error_log("Error al crear área: " . $e->getMessage());
+            return false;
+        }
+    }
+    
     public function subirDocumento() {
         try {
             // Validar campos obligatorios
@@ -284,6 +298,34 @@ class DocumentController {
             $entidad_productora = $_POST['entidad_productora'] ?? '';
             $fecha_limite = $_POST['fecha_limite'] ?? null;
             $fecha_requerida_respuesta = $_POST['fecha_requerida_respuesta'] ?? null;
+            $enviar_correo = isset($_POST['enviar_correo']);
+            
+            // Manejar áreas personalizadas
+            if ($area_id === 'otro') {
+                $area_custom = trim($_POST['area_origen_custom'] ?? '');
+                if (empty($area_custom)) {
+                    header("Location: /project/public/subir-documento?error=" . urlencode("Debe especificar el área de origen personalizada"));
+                    exit();
+                }
+                $area_id = $this->crearAreaPersonalizada($area_custom);
+                if (!$area_id) {
+                    header("Location: /project/public/subir-documento?error=" . urlencode("Error al crear área de origen"));
+                    exit();
+                }
+            }
+            
+            if ($area_destino_id === 'otro') {
+                $area_destino_custom = trim($_POST['area_destino_custom'] ?? '');
+                if (empty($area_destino_custom)) {
+                    header("Location: /project/public/subir-documento?error=" . urlencode("Debe especificar el área destino personalizada"));
+                    exit();
+                }
+                $area_destino_id = $this->crearAreaPersonalizada($area_destino_custom);
+                if (!$area_destino_id) {
+                    header("Location: /project/public/subir-documento?error=" . urlencode("Error al crear área destino"));
+                    exit();
+                }
+            }
             
             if (empty($folio) || empty($destinatarios) || empty($area_id) || empty($contenido) || empty($fecha_documento) || empty($area_destino_id)) {
                 header("Location: /project/public/subir-documento?error=" . urlencode("Todos los campos obligatorios deben completarse"));
@@ -353,7 +395,10 @@ class DocumentController {
                 
                 $memorando_id = $pdo->lastInsertId();
                 
-                // Insertar destinatarios
+                // Obtener datos del remitente para el correo
+                $remitente_nombre = $_SESSION['usuario']['nombre'];
+                
+                // Insertar destinatarios y enviar correos si está marcado
                 foreach ($destinatarios as $destinatario_id) {
                     $stmt = $pdo->prepare("
                         INSERT INTO documento_destinatarios (memorando_id, destinatario_id, estatus)
@@ -362,12 +407,34 @@ class DocumentController {
                     $stmt->execute([$memorando_id, $destinatario_id]);
                     
                     // Crear notificación para cada destinatario
-                    $this->crearNotificacion($destinatario_id, $folio, $_SESSION['usuario']['nombre']);
+                    $this->crearNotificacion($destinatario_id, $folio, $remitente_nombre);
+                    
+                    // Enviar correo si está marcado
+                    if ($enviar_correo) {
+                        // Obtener datos del destinatario
+                        $stmt = $pdo->prepare("SELECT nombre, correo FROM usuarios WHERE id = ?");
+                        $stmt->execute([$destinatario_id]);
+                        $destinatario = $stmt->fetch(PDO::FETCH_ASSOC);
+                        
+                        if ($destinatario) {
+                            EmailService::enviarNotificacionDocumento(
+                                $destinatario['correo'],
+                                $destinatario['nombre'],
+                                $folio,
+                                $remitente_nombre
+                            );
+                        }
+                    }
                 }
                 
                 $pdo->commit();
                 
-                header("Location: /project/public/documentos?success=" . urlencode("Documento enviado a " . count($destinatarios) . " destinatario(s) exitosamente"));
+                $mensaje_exito = "Documento enviado a " . count($destinatarios) . " destinatario(s) exitosamente";
+                if ($enviar_correo) {
+                    $mensaje_exito .= " con notificaciones por correo";
+                }
+                
+                header("Location: /project/public/documentos?success=" . urlencode($mensaje_exito));
                 exit();
             } catch (Exception $e) {
                 $pdo->rollBack();

@@ -12,7 +12,6 @@ body {
 
 /* Header Styles */
 .header {
-  background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
   padding: 1rem 2rem;
   color: white;
   display: flex;
@@ -309,7 +308,6 @@ body {
 
 /* Button Styles */
 .btn-primary {
-  background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -324,7 +322,6 @@ body {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #5a8c69 0%, #6a9c79 100%);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(74, 124, 89, 0.3);
 }
@@ -353,7 +350,7 @@ body {
 .btn-submit {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
+  background-color: #285f48 ;
   color: white;
   border: none;
   border-radius: 8px;
@@ -365,7 +362,7 @@ body {
 }
 
 .btn-submit:hover {
-  background: linear-gradient(135deg, #5a8c69 0%, #6a9c79 100%);
+  background-color: var(--primary-green-hover);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(74, 124, 89, 0.3);
 }

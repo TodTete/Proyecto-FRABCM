@@ -1,7 +1,6 @@
 @import url('./var.css');
 @import url('./main.css');
 
-/* Estilos específicos para la página de login */
 * {
     margin: 0;
     padding: 0;
@@ -183,7 +182,6 @@ body {
 }
 
 
-/* Responsive */
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;
@@ -195,4 +193,57 @@ body {
     .login-section {
         padding: 1rem;
     }
+}
+
+/* Estilos para la superposición de carga */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(74, 124, 89, 0.9);
+    display: none; /* Se mantiene oculto hasta que se active por JavaScript */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Contenedor para la imagen y el texto */
+.loading-content {
+    display: flex;
+    flex-direction: column; /* Alinea la imagen y el texto verticalmente */
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+/* Estilo para la imagen (logo) de carga */
+.loading-logo {
+  width: 80px;  /* Ajusta el tamaño como necesites */
+  height: 80px; /* Ajusta el tamaño como necesites */
+  margin-bottom: 1rem; /* Espacio entre la imagen y el texto */
+  animation: spin 2s linear infinite; /* Aplicación de la animación */
+}
+
+/* Estilo para el texto "Cargando..." */
+.loading-content p {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Define la animación de giro */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mejora para el botón cuando está en estado de carga */
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }

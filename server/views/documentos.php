@@ -61,354 +61,16 @@ $documentos = array_filter($documentos, function($doc) use ($busqueda, $estado, 
     return $matchBusqueda && $matchUrgencia && $matchFecha && $matchUsuario && $matchArea;
 });
 
+
+//variable para estilos
+$base_url_front = '/project/server';
 $base_url = '/project/public';
+
 
 ob_start();
 ?>
-
-<style>
-.search-bar {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    margin-bottom: 2rem;
-}
-
-.search-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    align-items: end;
-}
-
-.search-form .form-group {
-    margin-bottom: 0;
-}
-
-.search-actions {
-    display: flex;
-    gap: 0.5rem;
-    grid-column: 1 / -1;
-    justify-content: flex-end;
-    margin-top: 1rem;
-}
-
-.btn-search {
-    background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-search:hover {
-    background: linear-gradient(135deg, #5a8c69 0%, #6a9c79 100%);
-    transform: translateY(-2px);
-}
-
-.btn-clear {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-clear:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
-}
-
-.actions-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.documents-grid {
-    display: grid;
-    gap: 1.5rem;
-}
-
-.document-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    border-left: 4px solid #4a7c59;
-    transition: all 0.3s ease;
-    animation: fadeIn 0.8s ease-out;
-}
-
-.document-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.document-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
-}
-
-.document-folio {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    display: inline-block;
-}
-
-.urgencia-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.urgencia-ordinario { background: #f8f9fa; color: #666; }
-.urgencia-urgente { background: #f8d7da; color: #721c24; }
-
-.action-buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-}
-
-.btn-edit {
-    background: #17a2b8;
-    color: white;
-}
-
-.btn-view {
-    background: #28a745;
-    color: white;
-}
-
-.btn-download {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-details {
-    background: #ffc107;
-    color: #212529;
-}
-
-.btn-sm:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-}
-
-.destinatario-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    margin: 0.5rem 0;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.destinatario-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.destinatario-avatar {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.destinatario-estatus {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.estatus-pendiente { background: #f8d7da; color: #721c24; }
-.estatus-proceso { background: #fff3cd; color: #856404; }
-.estatus-atendido { background: #d4edda; color: #155724; }
-
-.empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: #666;
-}
-
-.filter-summary {
-    background: #e9ecef;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    color: #495057;
-}
-
-/* Modal para PDF */
-.pdf-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.8);
-    animation: fadeIn 0.3s ease-out;
-}
-
-.pdf-modal-content {
-    position: relative;
-    margin: 2% auto;
-    width: 90%;
-    height: 90%;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.pdf-modal-header {
-    background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.pdf-modal-body {
-    height: calc(100% - 70px);
-    padding: 0;
-}
-
-.pdf-modal-body iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background 0.3s ease;
-}
-
-.close-modal:hover {
-    background: rgba(255,255,255,0.2);
-}
-
-.btn-download-modal {
-    background: linear-gradient(135deg, #ff8c42 0%, #ff7b2e 100%);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-download-modal:hover {
-    background: linear-gradient(135deg, #ff7b2e 0%, #ff6a1a 100%);
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .search-form {
-        grid-template-columns: 1fr;
-    }
-    
-    .actions-bar {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .document-header {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .pdf-modal-content {
-        width: 95%;
-        height: 95%;
-        margin: 2.5% auto;
-    }
-    
-    .destinatario-item {
-        flex-direction: column;
-        gap: 0.5rem;
-        text-align: center;
-    }
-}
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="<?php echo $base_url_front; ?>/views/styles/documentos.css">
 
 <div class="container">
     <?php if (isset($_GET['error'])): ?>
@@ -423,69 +85,83 @@ ob_start();
         </div>
     <?php endif; ?>
     
-    <div class="search-bar">
-        <form method="GET" class="search-form">
-            <div class="form-group">
-                <label for="busqueda"><i class="fas fa-search"></i> Búsqueda General</label>
-                <input type="text" id="busqueda" name="busqueda" class="form-input" 
-                       placeholder="Folio, contenido, remitente..." value="<?php echo htmlspecialchars($busqueda); ?>">
-            </div>
-            
-            <div class="form-group">
-                <label for="urgencia"><i class="fas fa-star"></i> Urgencia</label>
-                <select id="urgencia" name="urgencia" class="form-select">
-                    <option value="">Todas</option>
-                    <option value="ordinario" <?php echo $urgencia === 'ordinario' ? 'selected' : ''; ?>>Ordinario</option>
-                    <option value="urgente" <?php echo $urgencia === 'urgente' ? 'selected' : ''; ?>>Urgente</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="fecha_desde"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
-                <input type="date" id="fecha_desde" name="fecha_desde" class="form-input" 
-                       value="<?php echo htmlspecialchars($fecha_desde); ?>">
-            </div>
-            
-            <div class="form-group">
-                <label for="fecha_hasta"><i class="fas fa-calendar-check"></i> Fecha Hasta</label>
-                <input type="date" id="fecha_hasta" name="fecha_hasta" class="form-input" 
-                       value="<?php echo htmlspecialchars($fecha_hasta); ?>">
-            </div>
-            
-            <div class="form-group">
-                <label for="usuario_filtro"><i class="fas fa-user"></i> Usuario</label>
-                <select id="usuario_filtro" name="usuario_filtro" class="form-select">
-                    <option value="">Todos los usuarios</option>
-                    <?php foreach ($usuarios as $user): ?>
-                        <option value="<?php echo $user['id']; ?>" <?php echo $usuario_filtro == $user['id'] ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($user['nombre']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="area_filtro"><i class="fas fa-sitemap"></i> Área</label>
-                <select id="area_filtro" name="area_filtro" class="form-select">
-                    <option value="">Todas las áreas</option>
-                    <?php foreach ($areas as $area): ?>
-                        <option value="<?php echo $area['id']; ?>" <?php echo $area_filtro == $area['id'] ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($area['nombre']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            
-            <div class="search-actions">
-                <button type="submit" class="btn-search">
-                    <i class="fas fa-search"></i> Buscar
-                </button>
-                <a href="<?php echo $base_url; ?>/documentos" class="btn-clear">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
+<div class="search-bar">
+    <form method="GET" class="search-form">
+        
+        <!-- Búsqueda general -->
+        <div class="form-group form-group-busqueda">
+            <label for="busqueda" class="label-title">
+                <i class="fas fa-search"></i>
+                <span class="label-text">Búsqueda General</span>
+            </label>
+            <input type="text" id="busqueda" name="busqueda" class="form-input" 
+                placeholder="Folio, contenido, remitente..." value="<?php echo htmlspecialchars($busqueda); ?>">
+        </div>
+
+
+        
+        <!-- Urgencia -->
+        <div class="form-group form-group-urgencia">
+            <label for="urgencia"><i class="fa-regular fa-star"></i> Urgencia</label>
+            <select id="urgencia" name="urgencia" class="form-select">
+                <option value="">Todas</option>
+                <option value="ordinario" <?php echo $urgencia === 'ordinario' ? 'selected' : ''; ?>>Ordinario</option>
+                <option value="urgente" <?php echo $urgencia === 'urgente' ? 'selected' : ''; ?>>Urgente</option>
+            </select>
+        </div>
+        
+        <!-- Fecha Desde -->
+        <div class="form-group form-group-fecha-desde">
+            <label for="fecha_desde"><i class="fa-regular fa-calendar-alt"></i> Fecha Desde</label>
+            <input type="date" id="fecha_desde" name="fecha_desde" class="form-input" 
+                value="<?php echo htmlspecialchars($fecha_desde); ?>">
+        </div>
+        
+        <!-- Fecha Hasta -->
+        <div class="form-group form-group-fecha-hasta">
+            <label for="fecha_hasta"><i class="fa-regular fa-calendar-check"></i> Fecha Hasta</label>
+            <input type="date" id="fecha_hasta" name="fecha_hasta" class="form-input" 
+                value="<?php echo htmlspecialchars($fecha_hasta); ?>">
+        </div>
+        
+        <!-- Usuario -->
+        <div class="form-group form-group-usuario">
+            <label for="usuario_filtro"><i class="fa-regular fa-user"></i> Usuario</label>
+            <select id="usuario_filtro" name="usuario_filtro" class="form-select">
+                <option value="">Todos los usuarios</option>
+                <?php foreach ($usuarios as $user): ?>
+                    <option value="<?php echo $user['id']; ?>" <?php echo $usuario_filtro == $user['id'] ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($user['nombre']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <!-- Área -->
+        <div class="form-group form-group-area">
+            <label for="area_filtro"><i class="fa-regular fa-building"></i> Área</label>
+            <select id="area_filtro" name="area_filtro" class="form-select">
+                <option value="">Todas las áreas</option>
+                <?php foreach ($areas as $area): ?>
+                    <option value="<?php echo $area['id']; ?>" <?php echo $area_filtro == $area['id'] ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($area['nombre']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <!-- Botones -->
+        <div class="search-actions">
+            <button type="submit" class="btn-search">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            <a href="<?php echo $base_url; ?>/documentos" class="btn-clear">
+                <i class="fas fa-times"></i> Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
     
     <?php if (!empty($busqueda) || !empty($urgencia) || !empty($fecha_desde) || !empty($fecha_hasta) || !empty($usuario_filtro) || !empty($area_filtro)): ?>
         <div class="filter-summary">
@@ -519,7 +195,7 @@ ob_start();
     
     <div class="actions-bar">
         <h2 style="color: #333;">
-            <i class="fas fa-file-alt"></i> Documentos 
+            <i class="fa-regular fa-file-alt"></i> Documentos 
             <small style="color: #666; font-weight: normal;">(<?php echo count($documentos); ?> encontrados)</small>
         </h2>
         <a href="<?php echo $base_url; ?>/subir-documento" class="btn-secondary">
@@ -541,7 +217,12 @@ ob_start();
                 <div class="document-card">
                     <div class="document-header">
                         <div class="document-folio">
-                            <i class="fas fa-file-alt"></i> <?php echo htmlspecialchars($doc['folio']); ?>
+                            <div class="document-icon">
+                                <i class="fas fa-file-alt"> </i> 
+                            </div>
+                            <div class="document-folio-name">
+                                <?php echo htmlspecialchars($doc['folio']); ?>
+                            </div>
                         </div>
                         <div>
                             <span class="urgencia-badge urgencia-<?php echo $doc['urgencia']; ?>">
@@ -550,20 +231,24 @@ ob_start();
                         </div>
                     </div>
                     
-                    <div>
-                        <p><strong><i class="fas fa-calendar"></i> Fecha:</strong> <?php echo date('d/m/Y', strtotime($doc['fecha_documento'] ?? $doc['fecha_creacion'])); ?></p>
-                        <p><strong><i class="fas fa-user"></i> Remitente:</strong> <?php echo htmlspecialchars($doc['remitente_nombre']); ?></p>
-                        <p><strong><i class="fas fa-sitemap"></i> Área:</strong> <?php echo htmlspecialchars($doc['area_nombre']); ?> → <?php echo htmlspecialchars($doc['area_destino_nombre'] ?? 'N/A'); ?></p>
+                    <div class="document-details">
+                        <p><strong><i class="fa-regular fa-calendar-alt"></i> Fecha:</strong> <span style="margin-left: 0.5em;"><?php echo date('d/m/Y', strtotime($doc['fecha_documento'] ?? $doc['fecha_creacion'])); ?></span></p>
+                        <p><strong><i class="fa-regular fa-user"></i> Remitente:</strong> <span style="margin-left: 0.5em;"><?php echo htmlspecialchars($doc['remitente_nombre']); ?></span></p>
+                        <p><strong><i class="fa-regular fa-building"></i> Área:</strong> <span style="margin-left: 0.5em;"><?php echo htmlspecialchars($doc['area_nombre']); ?> → <?php echo htmlspecialchars($doc['area_destino_nombre'] ?? 'N/A'); ?></span></p>
                         <?php if ($doc['fecha_limite']): ?>
-                            <p><strong><i class="fas fa-exclamation-circle"></i> Fecha Límite:</strong> <?php echo date('d/m/Y', strtotime($doc['fecha_limite'])); ?></p>
+                            <p><strong><i class="fa-regular fa-clock"></i> Fecha Límite:</strong> <span style="margin-left: 0.5em;"><?php echo date('d/m/Y', strtotime($doc['fecha_limite'])); ?></span></p>
                         <?php endif; ?>
                     </div>
                     
-                    <div style="margin-top: 1rem;">
-                        <p><strong><i class="fas fa-edit"></i> Contenido:</strong></p>
-                        <p><?php echo nl2br(htmlspecialchars(substr($doc['contenido'], 0, 200))); ?>
-                        <?php if (strlen($doc['contenido']) > 200): ?>...</p><?php endif; ?>
-                    </div>
+                    <div class="document-content-div" style="margin-top: 1rem; flex-direction: column; align-items: flex-start; height: auto;">
+    <div style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+        <strong><i class="fas fa-edit"></i> <span style="margin-left: 0.5em;">Contenido:</span></strong>
+    </div>
+    <div style="width: 100%;">
+        <?php echo nl2br(htmlspecialchars(substr($doc['contenido'], 0, 200))); ?>
+        <?php if (strlen($doc['contenido']) > 200): ?>...<?php endif; ?>
+    </div>
+</div>
                     
                     <div class="action-buttons">
                         <a href="<?php echo $base_url; ?>/editar-documento/<?php echo $doc['id']; ?>" class="btn-sm btn-edit">
@@ -587,7 +272,9 @@ ob_start();
 <div id="pdfModal" class="pdf-modal">
     <div class="pdf-modal-content">
         <div class="pdf-modal-header">
-            <h3 id="pdfTitle"><i class="fas fa-file-pdf"></i> Visualizar PDF</h3>
+            <h3 id="pdfTitle">
+                <i class="fas fa-file-pdf" style="margin-right: 0.5em;"></i> Visualizar PDF
+            </h3>
             <div>
                 <button class="close-modal" onclick="cerrarModalPDF()">
                     <i class="fas fa-times"></i>

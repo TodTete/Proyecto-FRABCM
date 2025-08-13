@@ -1,0 +1,35 @@
+.nav {
+    background: white;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-bottom: 3px solid #4a7c59;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav li {
+    flex: 1;
+}
+
+.nav a {
+    display: block;
+    text-decoration: none;
+    color: #4a7c59;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+    
+}
+
+.nav a:hover,
+.nav a.active {
+    background: #f8f9fa;
+    border-bottom-color: #ff8c42;
+    color: #333;
+}

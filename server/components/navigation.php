@@ -1,7 +1,10 @@
 <?php
 $base_url = '/project/public';
 $current_page = $current_page ?? '';
+$base_url_front = '/project/server/views/';
 ?>
+<link rel="stylesheet" href="<?php echo $base_url_front; ?>styles/nav.css">
+
 <div class="nav">
     <ul>
         <li><a href="<?php echo $base_url; ?>/dashboard" class="<?php echo $current_page === 'dashboard' ? 'active' : ''; ?>">Dashboard</a></li>

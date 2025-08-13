@@ -7,46 +7,20 @@
     <link rel="stylesheet" href="/project/server/views/styles/var.css" />
     <link rel="stylesheet" href="/project/server/views/styles/main.css" />
     <link rel="stylesheet" href="/project/server/views/styles/login.css" />
-    <link rel="icon" href="/project/public/images/logo.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <style>
-        /* ... Animaciones y media queries (idénticas a las que ya incluiste) ... */
-        .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(74, 124, 89, 0.9);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        }
-        .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top: 4px solid white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
-        }
-        @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-        }
-    </style>
+    <link rel="icon" href="/project/public/images/favicon.ico" type="image/x-icon">
     </head>
     <body>
 
     <!-- LOADING OVERLAY -->
-    <div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-content">
-        <div class="loading-spinner"></div>
-        <p>Cargando...</p>
-    </div>
-    </div>
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-content">
+    <!-- Se corrige la ruta (src) y se añade la clase "loading-logo" -->
+    <img src="/project/public/images/head-motocle.png" alt="Cargando..." class="loading-logo">
+    <p>Cargando...</p>
+  </div>
+</div>
 
     <?php require_once __DIR__ . '/components/header.html'; ?>
 
@@ -118,14 +92,12 @@
     const loadingOverlay = document.getElementById('loadingOverlay');
 
     loginBtn.disabled = true;
-    loginBtn.innerHTML = '<div class="loading-spinner" style="width:20px; height:20px; border-width:3px; display:inline-block; vertical-align:middle; margin-right:8px;"></div>Iniciando sesión...';
     loadingOverlay.style.display = 'flex';
 
     setTimeout(() => {
         e.target.submit(); 
     }, 2000); 
 });
-
 </script>
 
 </body>

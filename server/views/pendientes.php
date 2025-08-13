@@ -12,6 +12,12 @@ ob_start();
 ?>
 
 <style>
+.cointainer-pendientes {
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 80vh;
+}
+
 .pendientes-header {
     background: white;
     padding: 1.5rem;
@@ -33,7 +39,6 @@ ob_start();
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    border-left: 4px solid #4a7c59;
     transition: all 0.3s ease;
     animation: fadeIn 0.8s ease-out;
 }
@@ -43,9 +48,6 @@ ob_start();
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-.documento-card.pendiente {
-    border-left-color: #dc3545;
-}
 
 .documento-card.proceso {
     border-left-color: #ffc107;
@@ -62,9 +64,9 @@ ob_start();
     font-size: 1.2rem;
     font-weight: bold;
     color: white;
-    background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
+    background: #32785A;
     padding: 0.5rem 1rem;
-    border-radius: 8px;
+    border-radius: 50px;
     display: inline-block;
 }
 
@@ -112,6 +114,7 @@ ob_start();
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    border-radius: 50px;
 }
 
 .info-label {
@@ -126,9 +129,9 @@ ob_start();
 .documento-contenido {
     margin: 1rem 0;
     padding: 1rem;
-    background: #f8f9fa;
+    background: #ddebff;
     border-radius: 8px;
-    border-left: 3px solid #4a7c59;
+    border-radius: 12px;
 }
 
 .estatus-actions {
@@ -152,13 +155,15 @@ ob_start();
 }
 
 .btn-proceso {
-    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
-    color: #212529;
+    background: #17b2a8;
+    color: white;
+    border-radius:50px;
 }
 
 .btn-atendido {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: #EA8C30;
     color: white;
+    border-radius:50px;
 }
 
 .btn-estatus:hover {
@@ -209,7 +214,7 @@ ob_start();
 }
 </style>
 
-<div class="container">
+<div class="container cointainer-pendientes">
     <div class="pendientes-header">
         <h2 style="color: #333;">
             <i class="fas fa-tasks"></i> Mis Documentos Pendientes 
@@ -283,7 +288,7 @@ ob_start();
                         </button>
                         
                         <?php if ($doc['documento_blob']): ?>
-                            <button class="btn-estatus" style="background: #6c757d; color: white;" onclick="verPDF(<?php echo $doc['id']; ?>)">
+                            <button class="btn-estatus" style="background: #32785A; color: white; border-radius: 50px" onclick="verPDF(<?php echo $doc['id']; ?>)">
                                 <i class="fas fa-eye"></i> Ver PDF
                             </button>
                         <?php endif; ?>

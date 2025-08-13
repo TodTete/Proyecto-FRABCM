@@ -41,7 +41,7 @@ $base_url = '/project/public';
         }
         
         .folio-highlight {
-            background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
+            background: #32785A;
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -79,7 +79,7 @@ $base_url = '/project/public';
             background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 10px;
-            border-left: 4px solid #4a7c59;
+            border-left: 4px solid #32785A;
             margin: 1.5rem 0;
         }
         
@@ -103,13 +103,13 @@ $base_url = '/project/public';
         }
         
         .estatus-option:hover {
-            border-color: #4a7c59;
+            border-color: #32785A;
             transform: translateY(-2px);
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
         
         .estatus-option.selected {
-            border-color: #4a7c59;
+            border-color: #32785A;
             background: linear-gradient(135deg, #f8fff9 0%, #ffffff 100%);
         }
         
@@ -156,7 +156,7 @@ $base_url = '/project/public';
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: linear-gradient(135deg, #4a7c59 0%, #5a8c69 100%);
+            background-color: var(--primary-green);
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -175,16 +175,43 @@ $base_url = '/project/public';
             font-size: 0.8rem;
             font-weight: bold;
         }
-    </style>
+.volver{
+    background-color: var(--primary-green);
+    color: white; 
+    border-radius:50px; 
+    padding:10px; 
+    margin: 10px; 
+    width: 200px; 
+}
+
+.back-btn{
+    text-decoration: none; 
+    color: white;
+}
+
+.back-btn:hover{
+    color:#f2f7ff;
+    transform: translateY(-2px);
+
+}
+
+.btn-submit{
+    background-color: var(--primary-green)!important ;
+}
+
+</style>
 </head>
 <body>
     <?php include __DIR__ . '/../components/header.php'; ?>
     <?php $current_page = 'documentos'; include __DIR__ . '/../components/navigation.php'; ?>
     
-    <div class="container">
-        <a href="<?php echo $base_url; ?>/documentos" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Volver a Documentos
-        </a>
+    <div class="container"> 
+
+        <div class="volver">
+            <a href="<?php echo $base_url; ?>/documentos" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Volver a Documentos
+            </a>
+        </div>
         
         <div class="card">
             <div class="form-header">
@@ -292,24 +319,24 @@ $base_url = '/project/public';
                     <div class="form-group">
                         <label for="contenido"><i class="fas fa-edit"></i> Contenido del Documento *</label>
                         <textarea id="contenido" name="contenido" class="form-textarea" required 
-                                  placeholder="Escriba el contenido del memorando..."><?php echo htmlspecialchars($documento['contenido']); ?></textarea>
+                                    placeholder="Escriba el contenido del memorando..."><?php echo htmlspecialchars($documento['contenido']); ?></textarea>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label for="fecha_requerida_respuesta"><i class="fas fa-clock"></i> Fecha Requerida de Respuesta</label>
                             <input type="date" id="fecha_requerida_respuesta" name="fecha_requerida_respuesta" class="form-input" 
-                                   value="<?php echo $documento['fecha_requerida_respuesta']; ?>">
+                                    value="<?php echo $documento['fecha_requerida_respuesta']; ?>">
                         </div>
                         
                         <div class="form-group">
                             <label for="fecha_limite"><i class="fas fa-exclamation-circle"></i> Fecha Límite</label>
                             <input type="date" id="fecha_limite" name="fecha_limite" class="form-input" 
-                                   value="<?php echo $documento['fecha_limite']; ?>">
+                                    value="<?php echo $documento['fecha_limite']; ?>">
                         </div>
                     </div>
                     
-                    <button type="submit" class="btn-submit">
+                    <button type="submit" style="border-radius:50px; " class="btn-submit">
                         <i class="fas fa-save"></i> Actualizar Documento
                     </button>
                     

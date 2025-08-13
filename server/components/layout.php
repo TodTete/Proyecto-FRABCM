@@ -1,13 +1,13 @@
 <?php
 function renderLayout($title, $content, $usuario, $page_title = '', $current_page = '') {
     $base_url = '/project/public';
+    
     ?>
     <!DOCTYPE html>
     <html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" href="<?php echo $base_url; ?>/images/logo.ico" type="image/x-icon">
         <title><?php echo $title; ?> - UTTECAM</title>
         <link rel="stylesheet" href="../server/assets/styles.css">
         <?php include __DIR__ . '/fontawesome.php'; ?>
@@ -19,11 +19,10 @@ function renderLayout($title, $content, $usuario, $page_title = '', $current_pag
         ?>
         
         <?php echo $content; ?>
-        
-        <div class="footer">
-            © 2025 UTTECAM. Todos los derechos reservados.
-        </div>
-        
+    <link rel="stylesheet" href="/project/server/views/styles/footer.css">
+    <footer>
+        <p>&copy; 2025 UTTECAM. Todos los Derechos Reservados.</p>
+    </footer>
         <script>
             // Función para mostrar notificaciones toast
             function showToast(message, type = 'success') {

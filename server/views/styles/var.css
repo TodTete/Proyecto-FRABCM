@@ -6,6 +6,7 @@
     --color-yellow: #EA8C30;
     --color-gray: #D9D9D9;
     --bg-color: var(--color-gray);
+    --color-blue: #17a2b8;
     --white: #FFFFFF;
     --black: #000000;
     --footer-color: #C9BFC9;
@@ -15,14 +16,15 @@
     --primary-green-hover: #285f48;
     --color-yellow-hover: #b86a23;
     --color-gray-hover: #b0b0b0;
+    --color-blue-hover: #138496;
 
     /* Colores translúcidos (80%) */
-    --primary-orange-translucent: rgba(193, 55, 34, 0.8);
-    --primary-green-translucent: rgba(50, 120, 90, 0.8);
-    --color-yellow-translucent: rgba(234, 140, 48, 0.8);
-    --color-gray-translucent: rgba(217, 217, 217, 0.8);
-    --white-translucent: rgba(255,255,255,0.8);
-    --black-translucent: rgba(0,0,0,0.8);
+    --primary-orange-translucent: rgba(193, 55, 34, 0.6);
+    --primary-green-translucent: rgba(50, 120, 90, 0.6);
+    --color-yellow-translucent: rgba(234, 140, 48, 0.6);
+    --color-gray-translucent: rgba(217, 217, 217, 0.6);
+    --white-translucent: rgba(255,255,255,0.6);
+    --black-translucent: rgba(0,0,0,0.6);
 
     --fuente-principal: 'Segoe UI', Arial, sans-serif;
 }

@@ -2,11 +2,180 @@
 
 header {
     background-color: var(--primary-green);
-    padding: 1rem 2rem;
     color: white;
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Distribuye los logos a izquierda y derecha */
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    padding: 10px;
+    padding: 10px 20px;
     border-bottom: var(--primary-orange) 5px solid;
+    font-family: var(--fuente-principal);
+}
+
+.logo-uttecam {
+    height: 48px;
+}
+
+.logo-saddo {
+    height: 50px;
+    width: auto;
+    filter: drop-shadow(4px 4px 6px rgba(255, 255, 255, 0.3));
+}
+
+.saddo-text{
+    height: 25px;
+}
+/* Botón Editar Perfil */
+.edit-btn, .logout-btn{
+    width: 100%;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 5px;
+}
+
+.edit-btn,.logout-btn :hover {
+    transform: translateY(-1px);
+}
+
+.edit-btn{
+    background-color: var(--color-blue);
+}
+.edit-btn:hover{
+    background-color:  var(--color-blue-hover);
+}
+
+.logout-btn{
+    background-color: red;
+}
+
+.logout-btn:hover{
+    background-color: rgb(179, 4, 4);
+}
+
+
+
+
+/* Modal */
+.profile-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.profile-modal-content {
+    position: relative;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: slideInDown 0.3s ease-out;
+}
+
+.profile-modal-header {
+    background: var(--primary-green);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 4px solid var(--primary-orange);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 12px;
+    transition: background 0.3s ease;
+}
+
+.close-modal:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+.profile-modal-body {
+    padding: 2rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.profile-modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+
+.btn-cancel {
+    flex: 1;
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-cancel:hover {
+    background: #b42e3c;
+    transform: translateY(-1px);
+}
+
+.btn-save {
+    flex: 1;
+    background-color: var(--primary-green);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-save:hover {
+    background-color: var(--primary-green-hover);
+    transform: translateY(-1px);
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

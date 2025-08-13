@@ -69,8 +69,8 @@ body {
 }
 
 .saddo-img {
-    max-height: 100px;
-    height: auto;
+    height: 5pc;
+    width: auto;
     border-radius: 10px;
     padding: 4px;
     object-fit: contain;

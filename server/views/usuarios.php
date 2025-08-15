@@ -16,15 +16,17 @@ ob_start();
 <link rel="stylesheet" href="<?php echo $base_url_front; ?>/views/styles/usuarios.css">
 
 <style>
-    .container-user{
+    .container-user {
         min-height: 80vh;
     }
+
     .password-input-container {
         position: relative;
     }
 
     .password-input-container .form-input {
-        padding-right: 45px; /* Espacio para el icono */
+        padding-right: 45px;
+        /* Espacio para el icono */
     }
 
     .password-input-container #togglePasswordIcon {
@@ -33,11 +35,53 @@ ob_start();
         right: 15px;
         transform: translateY(-50%);
         cursor: pointer;
-        color: #6c757d; /* Color gris neutro */
+        color: #6c757d;
+        /* Color gris neutro */
     }
-
 </style>
 
+<!-- Incluir SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Confirmación de eliminación con SweetAlert
+    function confirmarEliminacion(form, nombreUsuario) {
+        event.preventDefault();
+        Swal.fire({
+            title: `¿Eliminar a ${nombreUsuario}?`,
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+
+    // Mostrar alertas de éxito/error al cargar
+    document.addEventListener("DOMContentLoaded", () => {
+        <?php if (isset($_GET['success'])): ?>
+            Swal.fire({
+                icon: "success",
+                title: "Éxito",
+                text: "<?php echo htmlspecialchars(urldecode($_GET['success'])); ?>"
+            });
+        <?php endif; ?>
+
+        <?php if (isset($_GET['error'])): ?>
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "<?php echo htmlspecialchars(urldecode($_GET['error'])); ?>"
+            });
+        <?php endif; ?>
+    });
+</script>
 
 <div class="container container-user">
     <?php if (isset($_GET['error'])): ?>
@@ -45,13 +89,13 @@ ob_start();
             <i class="fas fa-exclamation-triangle"></i> <?php echo htmlspecialchars(urldecode($_GET['error'])); ?>
         </div>
     <?php endif; ?>
-    
+
     <?php if (isset($_GET['success'])): ?>
         <div class="success-message">
             <i class="fas fa-check-circle"></i> <?php echo htmlspecialchars(urldecode($_GET['success'])); ?>
         </div>
     <?php endif; ?>
-    
+
     <div class="users-table-container">
         <div class="table-header">
             <h2><i class="fas fa-users"></i> Gestión de Usuarios del Sistema</h2>
@@ -59,7 +103,7 @@ ob_start();
                 <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
             </button>
         </div>
-        
+
         <?php if (empty($usuarios)): ?>
             <div class="empty-state" style="padding: 3rem;">
                 <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;">
@@ -114,14 +158,15 @@ ob_start();
                                 </td>
                                 <td class="actions-cell">
                                     <?php if ($user['id'] != $usuario['id']): ?>
-                                        <form action="<?php echo $base_url; ?>/eliminar-usuario" method="POST" 
-                                                onsubmit="return confirm('¿Estás seguro de eliminar a <?php echo htmlspecialchars($user['nombre']); ?>? Esta acción no se puede deshacer.')" 
-                                                style="display: inline;">
+                                        <form action="<?php echo $base_url; ?>/eliminar-usuario" method="POST"
+                                            onsubmit="confirmarEliminacion(this, '<?php echo htmlspecialchars($user['nombre']); ?>')"
+                                            style="display: inline;">
                                             <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
                                             <button type="submit" class="btn-delete">
                                                 <i class="fas fa-trash"></i> Eliminar
                                             </button>
                                         </form>
+
                                     <?php else: ?>
                                         <span class="current-user-indicator">
                                             <i class="fas fa-user-check"></i> Tu cuenta
@@ -133,11 +178,15 @@ ob_start();
                     </tbody>
                 </table>
             </div>
-            
+
             <div class="stats-row">
                 <span><strong>Total de usuarios:</strong> <?php echo count($usuarios); ?></span>
-                <span><strong>Administradores:</strong> <?php echo count(array_filter($usuarios, function($u) { return $u['rol'] === 'admin'; })); ?></span>
-                <span><strong>Usuarios regulares:</strong> <?php echo count(array_filter($usuarios, function($u) { return $u['rol'] === 'usuario'; })); ?></span>
+                <span><strong>Administradores:</strong> <?php echo count(array_filter($usuarios, function ($u) {
+                                                            return $u['rol'] === 'admin';
+                                                        })); ?></span>
+                <span><strong>Usuarios regulares:</strong> <?php echo count(array_filter($usuarios, function ($u) {
+                                                                return $u['rol'] === 'usuario';
+                                                            })); ?></span>
             </div>
         <?php endif; ?>
     </div>
@@ -151,19 +200,19 @@ ob_start();
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        
+
         <div class="profile-modal-body">
             <form id="createUserForm" action="<?php echo $base_url; ?>/crear-usuario" method="POST">
                 <div class="form-group">
                     <label for="nombre"><i class="fas fa-user"></i> Nombre Completo *</label>
                     <input type="text" id="nombre" name="nombre" class="form-input" required placeholder="Ej: Juan Pérez García">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="correo"><i class="fas fa-envelope"></i> Correo Electrónico *</label>
                     <input type="email" id="correo" name="correo" class="form-input" required placeholder="ejemplo@uttecam.edu.mx">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="contraseña"><i class="fas fa-lock"></i> Contraseña *</label>
                     <div class="password-input-container">
@@ -174,7 +223,7 @@ ob_start();
                         ⚠ Bloq Mayús está activado
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="rol"><i class="fas fa-user-tag"></i> Rol del Usuario *</label>
                     <select id="rol" name="rol" class="form-select" required>
@@ -183,7 +232,7 @@ ob_start();
                         <option value="admin">Administrador</option>
                     </select>
                 </div>
-                
+
                 <div class="profile-modal-actions">
                     <button type="button" class="btn-cancel" onclick="cerrarModalCrearUsuario()">
                         <i class="fas fa-times"></i> Cancelar
@@ -195,99 +244,100 @@ ob_start();
             </form>
         </div>
     </div>
-</div><script>
-// ===================================================================
-// SCRIPT PRINCIPAL
-// ===================================================================
+</div>
+<script>
+    // ===================================================================
+    // SCRIPT PRINCIPAL
+    // ===================================================================
 
-// Selección de elementos del DOM
-const passwordInput = document.getElementById("contraseña");
-const capsWarning = document.getElementById("caps-warning");
-const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+    // Selección de elementos del DOM
+    const passwordInput = document.getElementById("contraseña");
+    const capsWarning = document.getElementById("caps-warning");
+    const togglePasswordIcon = document.getElementById('togglePasswordIcon');
 
-// ===================================================================
-// Detección de Bloq Mayús mejorada y más rápida
-// ===================================================================
-function checkCapsLock(event) {
-  // La función event.getModifierState() es la forma moderna y confiable
-  // de saber si Bloq Mayús está activo.
-  if (event.getModifierState("CapsLock")) {
-    capsWarning.style.display = "block";
-  } else {
-    capsWarning.style.display = "none";
-  }
-}
+    // ===================================================================
+    // Detección de Bloq Mayús mejorada y más rápida
+    // ===================================================================
+    function checkCapsLock(event) {
+        // La función event.getModifierState() es la forma moderna y confiable
+        // de saber si Bloq Mayús está activo.
+        if (event.getModifierState("CapsLock")) {
+            capsWarning.style.display = "block";
+        } else {
+            capsWarning.style.display = "none";
+        }
+    }
 
-// 1. Usamos 'keydown' para que el aviso aparezca tan pronto presionas una letra (no después).
-passwordInput.addEventListener('keydown', checkCapsLock);
+    // 1. Usamos 'keydown' para que el aviso aparezca tan pronto presionas una letra (no después).
+    passwordInput.addEventListener('keydown', checkCapsLock);
 
-// 2. Usamos 'keyup' para detectar el cambio de estado de la propia tecla "Bloq Mayús".
-passwordInput.addEventListener('keyup', checkCapsLock);
+    // 2. Usamos 'keyup' para detectar el cambio de estado de la propia tecla "Bloq Mayús".
+    passwordInput.addEventListener('keyup', checkCapsLock);
 
-// 3. Usamos 'focus' para verificar si Bloq Mayús ya estaba activo al hacer clic en el campo.
-passwordInput.addEventListener('focus', checkCapsLock);
+    // 3. Usamos 'focus' para verificar si Bloq Mayús ya estaba activo al hacer clic en el campo.
+    passwordInput.addEventListener('focus', checkCapsLock);
 
-// 4. Usamos 'blur' para ocultar el aviso cuando sales del campo, por limpieza.
-passwordInput.addEventListener('blur', () => {
-    capsWarning.style.display = 'none';
-});
-
-
-// Funcionalidad para mostrar/ocultar contraseña
-togglePasswordIcon.addEventListener('click', function () {
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-    this.classList.toggle('fa-eye');
-    this.classList.toggle('fa-eye-slash');
-});
-
-// Ocultar alertas automáticamente
-setTimeout(() => {
-    document.querySelectorAll('.success-message, .error-message').forEach(el => {
-        el.style.transition = "opacity 0.5s ease";
-        el.style.opacity = "0";
-        setTimeout(() => el.remove(), 500);
+    // 4. Usamos 'blur' para ocultar el aviso cuando sales del campo, por limpieza.
+    passwordInput.addEventListener('blur', () => {
+        capsWarning.style.display = 'none';
     });
-}, 3000);
 
-// Funciones para el Modal
-function abrirModalCrearUsuario() {
-    document.getElementById('crearUsuarioModal').style.display = 'block';
-    document.body.style.overflow = 'hidden';
-}
 
-function cerrarModalCrearUsuario() {
-    document.getElementById('crearUsuarioModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    document.getElementById('createUserForm').reset();
-    
-    // Restaurar el campo de contraseña y el icono a su estado inicial
-    passwordInput.setAttribute('type', 'password');
-    togglePasswordIcon.classList.remove('fa-eye-slash');
-    togglePasswordIcon.classList.add('fa-eye');
-    capsWarning.style.display = 'none';
-}
+    // Funcionalidad para mostrar/ocultar contraseña
+    togglePasswordIcon.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+    });
 
-// Evento para cerrar el modal al hacer clic fuera de él
-window.addEventListener('click', function(event) {
-    if (event.target === document.getElementById('crearUsuarioModal')) {
-        cerrarModalCrearUsuario();
+    // Ocultar alertas automáticamente
+    setTimeout(() => {
+        document.querySelectorAll('.success-message, .error-message').forEach(el => {
+            el.style.transition = "opacity 0.5s ease";
+            el.style.opacity = "0";
+            setTimeout(() => el.remove(), 500);
+        });
+    }, 3000);
+
+    // Funciones para el Modal
+    function abrirModalCrearUsuario() {
+        document.getElementById('crearUsuarioModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
-});
 
-// Evento para cerrar el modal al presionar la tecla "Escape"
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        cerrarModalCrearUsuario();
+    function cerrarModalCrearUsuario() {
+        document.getElementById('crearUsuarioModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+        document.getElementById('createUserForm').reset();
+
+        // Restaurar el campo de contraseña y el icono a su estado inicial
+        passwordInput.setAttribute('type', 'password');
+        togglePasswordIcon.classList.remove('fa-eye-slash');
+        togglePasswordIcon.classList.add('fa-eye');
+        capsWarning.style.display = 'none';
     }
-});
 
-// Desactivar botón al enviar formulario para evitar envíos múltiples
-document.getElementById('createUserForm').addEventListener('submit', function() {
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<div class="spinner"></div> Creando usuario...';
-});
+    // Evento para cerrar el modal al hacer clic fuera de él
+    window.addEventListener('click', function(event) {
+        if (event.target === document.getElementById('crearUsuarioModal')) {
+            cerrarModalCrearUsuario();
+        }
+    });
+
+    // Evento para cerrar el modal al presionar la tecla "Escape"
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            cerrarModalCrearUsuario();
+        }
+    });
+
+    // Desactivar botón al enviar formulario para evitar envíos múltiples
+    document.getElementById('createUserForm').addEventListener('submit', function() {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<div class="spinner"></div> Creando usuario...';
+    });
 </script>
 
 <?php

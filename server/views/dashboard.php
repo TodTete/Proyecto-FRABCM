@@ -25,6 +25,7 @@ ob_start();
 ?>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <link rel="stylesheet" href="<?php echo $base_url; ?>/views/styles/dashboard.css">
+<link rel="icon" href="<?php echo $base_url; ?>logo.ico" type="image/ico">
 
 <div class="container">
     <div class="welcome-section" >
@@ -75,9 +76,6 @@ ob_start();
     <div class="documents-section">
         <div class="section-header">
             <h2>Memorandos Recientes</h2>
-            <a href="<?php echo $base_url; ?>/subir-documento" class="btn-secondary">
-                <i class="fas fa-file-upload"></i> Nuevo Documento
-            </a>
         </div>
         
         <?php if (empty($documentos)): ?>

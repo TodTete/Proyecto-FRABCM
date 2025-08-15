@@ -48,7 +48,6 @@ ob_start();
     box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-
 .documento-card.proceso {
     border-left-color: #ffc107;
 }
@@ -130,7 +129,6 @@ ob_start();
     margin: 1rem 0;
     padding: 1rem;
     background: #ddebff;
-    border-radius: 8px;
     border-radius: 12px;
 }
 
@@ -299,45 +297,81 @@ ob_start();
     </div>
 </div>
 
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function actualizarEstatus(memorandoId, nuevoEstatus) {
-    if (confirm(`¿Estás seguro de marcar este documento como "${nuevoEstatus}"?`)) {
-        fetch('<?php echo $base_url; ?>/actualizar-estatus-documento', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `memorando_id=${memorandoId}&estatus=${nuevoEstatus}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showToast('Estatus actualizado correctamente', 'success');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
-            } else {
-                showToast('Error al actualizar el estatus', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Error al actualizar el estatus', 'error');
-        });
-    }
+    Swal.fire({
+        title: `¿Marcar como "${nuevoEstatus}"?`,
+        text: "Esta acción actualizará el estatus del documento.",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí, confirmar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#17b2a8",
+        cancelButtonColor: "#6c757d"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('<?php echo $base_url; ?>/actualizar-estatus-documento', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `memorando_id=${memorandoId}&estatus=${nuevoEstatus}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Éxito",
+                        text: "Estatus actualizado correctamente",
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: "No se pudo actualizar el estatus"
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Ocurrió un problema al comunicarse con el servidor"
+                });
+            });
+        }
+    });
 }
 
 function verPDF(documentoId) {
     window.open('<?php echo $base_url; ?>/ver-pdf/' + documentoId, '_blank');
 }
 
-<?php if (isset($_GET['error'])): ?>
-    showToast('<?php echo htmlspecialchars(urldecode($_GET['error'])); ?>', 'error');
-<?php endif; ?>
+// Mostrar mensajes de PHP al cargar la página
+document.addEventListener("DOMContentLoaded", () => {
+    <?php if (isset($_GET['success'])): ?>
+        Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: "<?php echo htmlspecialchars(urldecode($_GET['success'])); ?>"
+        });
+    <?php endif; ?>
 
-<?php if (isset($_GET['success'])): ?>
-    showToast('<?php echo htmlspecialchars(urldecode($_GET['success'])); ?>', 'success');
-<?php endif; ?>
+    <?php if (isset($_GET['error'])): ?>
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "<?php echo htmlspecialchars(urldecode($_GET['error'])); ?>"
+        });
+    <?php endif; ?>
+});
 </script>
 
 <?php

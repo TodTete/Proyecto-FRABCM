@@ -3,6 +3,10 @@ require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../controllers/DocumentController.php';
 require_once __DIR__ . '/../components/layout.php';
 
+if (session_status() === PHP_SESSION_NONE) session_start();
+$form_data = $_SESSION['form_data'] ?? [];
+// No limpiar aquí, solo tras éxito en el backend
+
 $usuario = AuthMiddleware::getUser();
 $documentController = new DocumentController();
 $usuarios = $documentController->obtenerUsuarios();
@@ -195,6 +199,39 @@ ob_start();
     gap: 0.5rem;
 }
 
+.error-message {
+    background-color: #ffebee;
+    color: #ffffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #c62828;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #2e7d32;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.file-info {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f0f4f8;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -236,32 +273,46 @@ ob_start();
             <div class="form-row">
                 <div class="form-group">
                     <label for="folio"><i class="fas fa-file-alt"></i> Folio *</label>
-                    <input type="text" id="folio" name="folio" class="form-input" required placeholder="Ej: MEM-2025-001">
+                    <input type="text" id="folio" name="folio" class="form-input" required 
+                           placeholder="Ej: MEM-2025-001" 
+                           value="<?php echo htmlspecialchars($form_data['folio'] ?? ''); ?>">
                 </div>
                 
                 <div class="form-group">
                     <label for="fecha_documento"><i class="fas fa-calendar"></i> Fecha del Documento *</label>
-                    <input type="date" id="fecha_documento" name="fecha_documento" class="form-input" required value="<?php echo date('Y-m-d'); ?>">
+                    <input type="date" id="fecha_documento" name="fecha_documento" class="form-input" required 
+                           value="<?php echo htmlspecialchars($form_data['fecha_documento'] ?? date('Y-m-d')); ?>">
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="entidad_productora"><i class="fas fa-building"></i> Entidad Productora</label>
-                <input type="text" id="entidad_productora" name="entidad_productora" class="form-input" placeholder="Ej: Dirección General">
+                <input type="text" id="entidad_productora" name="entidad_productora" class="form-input" 
+                       placeholder="Ej: Dirección General"
+                       value="<?php echo htmlspecialchars($form_data['entidad_productora'] ?? ''); ?>">
             </div>
             
             <div class="form-group">
                 <label for="destinatarios"><i class="fas fa-users"></i> Destinatarios *</label>
                 <div class="multi-select-container">
                     <div class="multi-select-trigger" onclick="toggleMultiSelect()">
-                        <span id="selectedText">Seleccionar destinatarios</span>
+                        <span id="selectedText">
+                            <?php
+                            if (isset($form_data['destinatarios']) && is_array($form_data['destinatarios']) && count($form_data['destinatarios']) > 0) {
+                                echo count($form_data['destinatarios']) . ' destinatario(s) seleccionado(s)';
+                            } else {
+                                echo 'Seleccionar destinatarios';
+                            }
+                            ?>
+                        </span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="multi-select-dropdown" id="multiSelectDropdown">
                         <?php foreach ($usuarios as $user): ?>
                             <div class="multi-select-option">
                                 <input type="checkbox" name="destinatarios[]" value="<?php echo $user['id']; ?>" 
-                                       id="user_<?php echo $user['id']; ?>" onchange="updateSelectedUsers()">
+                                       id="user_<?php echo $user['id']; ?>" onchange="updateSelectedUsers()"
+                                       <?php echo (isset($form_data['destinatarios']) && in_array($user['id'], $form_data['destinatarios'])) ? 'checked' : ''; ?>>
                                 <label for="user_<?php echo $user['id']; ?>">
                                     <?php echo htmlspecialchars($user['nombre'] . ' (' . $user['correo'] . ')'); ?>
                                 </label>
@@ -269,7 +320,20 @@ ob_start();
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="selected-users" id="selectedUsers"></div>
+                <div class="selected-users" id="selectedUsers">
+                <?php
+                if (isset($form_data['destinatarios']) && is_array($form_data['destinatarios'])) {
+                    foreach ($form_data['destinatarios'] as $destId) {
+                        foreach ($usuarios as $user) {
+                            if ($user['id'] == $destId) {
+                                $userName = htmlspecialchars($user['nombre'] . ' (' . $user['correo'] . ')');
+                                echo '<div class="user-tag"><span>' . $userName . '</span><span class="remove" onclick="removeUser(\'user_' . $user['id'] . '\')">×</span></div>';
+                            }
+                        }
+                    }
+                }
+                ?>
+                </div>
             </div>
             
             <div class="form-row">
@@ -279,15 +343,21 @@ ob_start();
                         <select id="area_id" name="area_id" class="form-select" required onchange="toggleAreaCustom('origen')">
                             <option value="">Seleccionar área</option>
                             <?php foreach ($areas as $area): ?>
-                                <option value="<?php echo $area['id']; ?>">
+                                <option value="<?php echo $area['id']; ?>"
+                                    <?php echo (isset($form_data['area_id']) && $form_data['area_id'] == $area['id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($area['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="otro">🖊️ Otro (Escribir área personalizada)</option>
+                            <option value="otro" <?php echo (isset($form_data['area_id']) && $form_data['area_id'] === 'otro') ? 'selected' : ''; ?>>
+                                🖊️ Otro (Escribir área personalizada)
+                            </option>
                         </select>
-                        <div class="area-custom-input" id="area_origen_custom">
+                        <div class="area-custom-input" id="area_origen_custom" 
+                             <?php echo (isset($form_data['area_id']) && $form_data['area_id'] === 'otro') ? 'style="display: block;"' : ''; ?>>
                             <input type="text" name="area_origen_custom" class="form-input" 
-                                   placeholder="Escriba el nombre del área de origen">
+                                   placeholder="Escriba el nombre del área de origen"
+                                   value="<?php echo htmlspecialchars($form_data['area_origen_custom'] ?? ''); ?>"
+                                   <?php echo (isset($form_data['area_id']) && $form_data['area_id'] === 'otro') ? 'required' : ''; ?>>
                         </div>
                     </div>
                 </div>
@@ -298,15 +368,21 @@ ob_start();
                         <select id="area_destino_id" name="area_destino_id" class="form-select" required onchange="toggleAreaCustom('destino')">
                             <option value="">Seleccionar área destino</option>
                             <?php foreach ($areas as $area): ?>
-                                <option value="<?php echo $area['id']; ?>">
+                                <option value="<?php echo $area['id']; ?>"
+                                    <?php echo (isset($form_data['area_destino_id']) && $form_data['area_destino_id'] == $area['id']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($area['nombre']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="otro">🖊️ Otro (Escribir área personalizada)</option>
+                            <option value="otro" <?php echo (isset($form_data['area_destino_id']) && $form_data['area_destino_id'] === 'otro') ? 'selected' : ''; ?>>
+                                🖊️ Otro (Escribir área personalizada)
+                            </option>
                         </select>
-                        <div class="area-custom-input" id="area_destino_custom">
+                        <div class="area-custom-input" id="area_destino_custom" 
+                             <?php echo (isset($form_data['area_destino_id']) && $form_data['area_destino_id'] === 'otro') ? 'style="display: block;"' : ''; ?>>
                             <input type="text" name="area_destino_custom" class="form-input" 
-                                   placeholder="Escriba el nombre del área destino">
+                                   placeholder="Escriba el nombre del área destino"
+                                   value="<?php echo htmlspecialchars($form_data['area_destino_custom'] ?? ''); ?>"
+                                   <?php echo (isset($form_data['area_destino_id']) && $form_data['area_destino_id'] === 'otro') ? 'required' : ''; ?>>
                         </div>
                     </div>
                 </div>
@@ -314,24 +390,33 @@ ob_start();
             
             <div class="form-group">
                 <label for="contenido"><i class="fas fa-edit"></i> Contenido del Documento *</label>
-                <textarea id="contenido" name="contenido" class="form-textarea" required placeholder="Escriba el contenido del memorando..."></textarea>
+                <textarea id="contenido" name="contenido" class="form-textarea" required 
+                          placeholder="Escriba el contenido del memorando..."><?php echo htmlspecialchars($form_data['contenido'] ?? ''); ?></textarea>
             </div>
             
             <div class="form-group">
                 <label for="documento"><i class="fas fa-file-pdf"></i> Archivo PDF *</label>
                 <input type="file" id="documento" name="documento" class="form-file" accept=".pdf" required>
                 <small style="color: #666; font-size: 0.9rem;">Máximo 10MB, solo archivos PDF</small>
+                <?php if (isset($form_data['documento_name'])): ?>
+                    <div class="file-info">
+                        <i class="fas fa-file"></i> Archivo seleccionado anteriormente: 
+                        <?php echo htmlspecialchars($form_data['documento_name']); ?>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="fecha_requerida_respuesta"><i class="fas fa-clock"></i> Fecha Requerida de Respuesta</label>
-                    <input type="date" id="fecha_requerida_respuesta" name="fecha_requerida_respuesta" class="form-input">
+                    <input type="date" id="fecha_requerida_respuesta" name="fecha_requerida_respuesta" class="form-input"
+                           value="<?php echo htmlspecialchars($form_data['fecha_requerida_respuesta'] ?? ''); ?>">
                 </div>
                 
                 <div class="form-group">
                     <label for="fecha_limite"><i class="fas fa-exclamation-circle"></i> Fecha Límite</label>
-                    <input type="date" id="fecha_limite" name="fecha_limite" class="form-input">
+                    <input type="date" id="fecha_limite" name="fecha_limite" class="form-input"
+                           value="<?php echo htmlspecialchars($form_data['fecha_limite'] ?? ''); ?>">
                 </div>
             </div>
             
@@ -339,17 +424,26 @@ ob_start();
                 <label><i class="fas fa-flag"></i> Urgencia *</label>
                 <div class="urgencia-options">
                     <div class="radio-option">
-                        <input type="radio" id="ordinario" name="urgencia" value="ordinario" checked>
+                        <input type="radio" id="ordinario" name="urgencia" value="ordinario" 
+                               <?php echo (!isset($form_data['urgencia']) || $form_data['urgencia'] === 'ordinario') ? 'checked' : ''; ?>>
                         <label for="ordinario"><i class="fas fa-file"></i> Ordinario</label>
                     </div>
                     <div class="radio-option">
-                        <input type="radio" id="urgente" name="urgencia" value="urgente">
+                        <input type="radio" id="urgente" name="urgencia" value="urgente" 
+                               <?php echo (isset($form_data['urgencia']) && $form_data['urgencia'] === 'urgente') ? 'checked' : ''; ?>>
                         <label for="urgente"><i class="fas fa-star"></i> Urgente</label>
                     </div>
                 </div>
             </div>
             
-       
+           <!-- <div class="checkbox-container">
+                <input type="checkbox" id="enviar_correo" name="enviar_correo" 
+                       <?php echo isset($form_data['enviar_correo']) ? 'checked' : ''; ?>>
+                <label for="enviar_correo" class="checkbox-label">
+                    <i class="fas fa-envelope"></i> Enviar notificación por correo a los destinatarios
+                </label>
+            </div>-->
+            
             <button type="submit" class="btn-submit">
                 <i class="fas fa-paper-plane"></i> Enviar Documento
             </button>

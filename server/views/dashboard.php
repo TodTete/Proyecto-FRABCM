@@ -3,22 +3,80 @@ require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../controllers/DocumentController.php';
 require_once __DIR__ . '/../controllers/NotificationController.php';
 require_once __DIR__ . '/../components/layout.php';
+
+/**
+ * Usuario autenticado actualmente en la sesión.
+ *
+ * Se obtiene mediante el middleware de autenticación. Esta variable
+ * contiene los datos esenciales del usuario logueado, incluyendo:
+ *  - id (int) Identificador único en BD
+ *  - nombre (string) Nombre completo
+ *  - rol (string) Rol de usuario (ej: admin, empleado, etc.)
+ *
+ * @var array $usuario Datos del usuario activo.
+ */
 $usuario = AuthMiddleware::getUser();
+
+/**
+ * Controlador de documentos.
+ * 
+ * Permite realizar operaciones relacionadas con documentos
+ * como obtener documentos recientes, estadísticas, crear o editar.
+ *
+ * @var DocumentController $documentController
+ */
 $documentController = new DocumentController();
+
+/**
+ * Controlador de notificaciones.
+ *
+ * Responsable de la gestión de notificaciones asociadas
+ * a documentos y usuarios.
+ *
+ * @var NotificationController $notificationController
+ */
 $notificationController = new NotificationController();
 
-// Obtener documentos recientes
+/**
+ * Obtención de documentos recientes.
+ *
+ * 🔒 Si el usuario tiene rol `admin`, obtiene todos los documentos recientes.
+ * 🔒 Si es otro rol, solo obtiene los documentos creados/asignados a dicho usuario.
+ *
+ * @var array $documentos Lista de documentos recientes (folio, remitente, estado, etc.)
+ */
 if ($usuario['rol'] === 'admin') {
     $documentos = $documentController->obtenerDocumentosRecientes();
 } else {
     $documentos = $documentController->obtenerDocumentosRecientes($usuario['id']);
 }
 
-// Estadísticas
+/**
+ * Estadísticas generales de documentos.
+ *
+ * Genera un resumen numérico de documentos según el rol del usuario.
+ * Los valores más comunes son:
+ *  - total (int)
+ *  - pendientes (int)
+ *  - proceso (int)
+ *  - atendidos (int)
+ *
+ * @var array $stats Resumen de estadísticas de documentos.
+ */
 $stats = $documentController->obtenerEstadisticas($usuario['id'], $usuario['rol']);
 
+/**
+ * URL base para acceso a imágenes públicas.
+ *
+ * @var string $base_url_front
+ */
 $base_url_front = '/project/public/images/';
 
+/**
+ * URL base del servidor (para rutas internas).
+ *
+ * @var string $base_url
+ */
 $base_url = '/project/server';
 
 ob_start();
@@ -141,20 +199,61 @@ ob_start();
 </div>
 
 <script>
+
+/**
+ * Redirige al usuario a la vista de edición del documento.
+ *
+ * @param {number} id Identificador único del documento.
+ */
 function editDocument(id) {
     window.location.href = '<?php echo $base_url; ?>/editar-documento/' + id;
 }
 
+/**
+ * Abre en una nueva pestaña la vista previa del PDF del documento.
+ *
+ * @param {number} id Identificador único del documento.
+ */
 function viewPDF(id) {
     window.open('<?php echo $base_url; ?>/ver-pdf/' + id, '_blank');
 }
 
+ /**
+ * Descarga el archivo PDF asociado a un documento.
+ *
+ * @param {number} id Identificador único del documento.
+ */
 function downloadPDF(id) {
     window.location.href = '<?php echo $base_url; ?>/descargar-pdf/' + id;
 }
 </script>
 
 <?php
+/**
+ * Captura el contenido generado en el buffer de salida y lo almacena en una variable.
+ *
+ * La función `ob_get_clean()` obtiene todo lo que se haya enviado al buffer de salida 
+ * (por ejemplo, HTML generado previamente) y lo guarda en la variable `$content`. 
+ * Además, limpia (vacía) el buffer para evitar que se muestre duplicado.
+ *
+ * @var string $content Contiene el contenido HTML o texto procesado en el buffer de salida.
+ */
 $content = ob_get_clean();
+/**
+ * Renderiza el layout principal de la aplicación.
+ *
+ * La función `renderLayout()` se encarga de ensamblar el contenido capturado (`$content`) 
+ * dentro de una plantilla base. Se le pasan parámetros adicionales para configurar 
+ * el título de la página, el usuario autenticado, el subtítulo o encabezado, 
+ * y el identificador de la sección que se está mostrando.
+ *
+ * @param string $title        Título principal de la vista, en este caso "Dashboard".
+ * @param string $content      Contenido HTML capturado desde el buffer de salida.
+ * @param mixed  $usuario      Datos del usuario autenticado (puede ser un objeto o array).
+ * @param string $subtitle     Subtítulo o descripción corta de la sección, en este caso "Panel de Control".
+ * @param string $section      Identificador interno de la sección actual, aquí "dashboard".
+ *
+ * @return void No retorna ningún valor, se encarga de renderizar la salida directamente al navegador.
+ */
 renderLayout('Dashboard', $content, $usuario, 'Panel de Control', 'dashboard');
 ?>

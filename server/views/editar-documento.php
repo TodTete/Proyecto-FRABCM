@@ -1,25 +1,71 @@
 <?php
+/**
+ * Archivo: editar-documento.php
+ * Descripción:
+ *  Permite editar un documento existente. Dependiendo del rol del usuario:
+ *  - Remitente/Admin: puede editar todos los campos.
+ *  - Destinatario autorizado: solo puede actualizar su estatus de atención.
+ *  - Usuario sin permisos: no puede editar.
+ *
+ * Dependencias:
+ *  - AuthMiddleware: para autenticación y obtención del usuario.
+ *  - DocumentController: para obtener y actualizar datos de documentos.
+ */
+
+// =========================
+// IMPORTACIÓN DE DEPENDENCIAS
+// =========================
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
 require_once __DIR__ . '/../controllers/DocumentController.php';
-AuthMiddleware::requireAuth();
 
+// =========================
+// VERIFICACIÓN DE AUTENTICACIÓN
+// =========================
+AuthMiddleware::requireAuth(); // Si no hay sesión, redirige a login
+
+// =========================
+// OBTENCIÓN DEL DOCUMENTO
+// =========================
 $documento_id = $_GET['id'] ?? 0;
 $documentController = new DocumentController();
 $documento = $documentController->obtenerDocumentoPorId($documento_id);
 
+// Si no existe, redirige con error
 if (!$documento) {
     header("Location: /project/public/documentos?error=" . urlencode("Documento no encontrado"));
     exit();
 }
 
+// =========================
+// USUARIO Y PERMISOS
+// =========================
 $usuario = AuthMiddleware::getUser();
 $usuarios = $documentController->obtenerUsuarios();
 $areas = $documentController->obtenerAreas();
+
+/**
+ * Lista de destinatarios del documento.
+ * Útil para determinar el estatus individual de cada destinatario.
+ * @var array $destinatarios
+ */
 $destinatarios = $documentController->obtenerDestinatariosDocumento($documento_id);
 
-// Verificar si el usuario puede editar el estatus
+/**
+ * Determina si el usuario puede editar el estatus (solo destinatarios permitidos)
+ * @var bool $puedeEditarEstatus
+ */
 $puedeEditarEstatus = $documentController->puedeEditarEstatus($documento_id, $usuario['id']);
+
+/**
+ * Determina si el usuario es el remitente del documento
+ * @var bool $esRemitente
+ */
 $esRemitente = $documento['remitente_id'] == $usuario['id'];
+
+/**
+ * Determina si el usuario es administrador
+ * @var bool $esAdmin
+ */
 $esAdmin = $usuario['rol'] === 'admin';
 
 $base_url = '/project/public';

@@ -298,8 +298,21 @@ ob_start();
 </div>
 
 <!-- SweetAlert2 -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    /**
+ * Actualiza el estatus de un documento en el sistema.
+ * 
+ * - Muestra un cuadro de confirmación con SweetAlert2.
+ * - Si el usuario confirma, envía una petición POST al servidor
+ *   para cambiar el estatus del documento.
+ * - Si la operación es exitosa, muestra mensaje de éxito y recarga la página.
+ * - Si ocurre un error, muestra un mensaje correspondiente.
+ * 
+ * @param {number} memorandoId - ID del documento a actualizar.
+ * @param {string} nuevoEstatus - Nuevo estatus que se asignará ("proceso" o "atendido").
+ */
 function actualizarEstatus(memorandoId, nuevoEstatus) {
     Swal.fire({
         title: `¿Marcar como "${nuevoEstatus}"?`,
@@ -312,6 +325,7 @@ function actualizarEstatus(memorandoId, nuevoEstatus) {
         cancelButtonColor: "#6c757d"
     }).then((result) => {
         if (result.isConfirmed) {
+             // Petición al servidor para actualizar el estatus
             fetch('<?php echo $base_url; ?>/actualizar-estatus-documento', {
                 method: 'POST',
                 headers: {
@@ -349,12 +363,24 @@ function actualizarEstatus(memorandoId, nuevoEstatus) {
         }
     });
 }
-
+/**
+ * Abre el PDF asociado a un documento en una nueva pestaña.
+ * 
+ * - Utiliza la función `window.open` para cargar el PDF en otra ventana.
+ * 
+ * @param {number} documentoId - ID del documento cuyo PDF se desea visualizar.
+ */
 function verPDF(documentoId) {
     window.open('<?php echo $base_url; ?>/ver-pdf/' + documentoId, '_blank');
 }
 
 // Mostrar mensajes de PHP al cargar la página
+    /**
+ * Muestra mensajes de éxito o error generados desde PHP al cargar la página.
+ * 
+ * - Si existe el parámetro `success` en la URL, se muestra un SweetAlert de éxito.
+ * - Si existe el parámetro `error`, se muestra un SweetAlert de error.
+ */
 document.addEventListener("DOMContentLoaded", () => {
     <?php if (isset($_GET['success'])): ?>
         Swal.fire({

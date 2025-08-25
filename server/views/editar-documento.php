@@ -248,7 +248,11 @@ $base_url = '/project/public';
 </style>
 </head>
 <body>
+
+    // HEADER: incluye barra superior con logo, usuario y perfil
     <?php include __DIR__ . '/../components/header.php'; ?>
+    // NAVIGATION: menú lateral
+    // $current_page se usa para marcar el menú activo
     <?php $current_page = 'documentos'; include __DIR__ . '/../components/navigation.php'; ?>
     
     <div class="container"> 

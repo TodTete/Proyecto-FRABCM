@@ -86,17 +86,26 @@
     <?php require_once __DIR__ . '/components/footer.html'; ?>
 
     <script>
+        /**
+   * Evento que captura el envío del formulario de login.
+   * 
+   * - Previene el envío inmediato con `preventDefault()`.
+   * - Deshabilita el botón de inicio de sesión para evitar clics repetidos.
+   * - Muestra una pantalla de carga mientras se procesa la solicitud.
+   * - Después de 2 segundos, envía el formulario de manera normal.
+   */
     document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault(); 
+    e.preventDefault(); // Evita el envío inmediato del formulario
 
     const loginBtn = document.getElementById('loginBtn');
     const loadingOverlay = document.getElementById('loadingOverlay');
 
     loginBtn.disabled = true;
     loadingOverlay.style.display = 'flex';
-
+ // Simulación de carga (2 segundos) antes de enviar el formulario
     setTimeout(() => {
-        e.target.submit(); 
+        e.target.submit(); // Envía el formulario después del tiempo de espera
+    }, 2000);
     }, 2000); 
 });
 </script>

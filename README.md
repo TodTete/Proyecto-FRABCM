@@ -31,8 +31,8 @@ SADDO/
 Clona el repositorio:
 
 ```bash
-git clone https://github.com/usuario/saddo.git
-cd saddo
+git clone https://github.com/TodTete/Proyecto-FRABCM.git
+cd Proyecto-FRABCM
 ```
 
 Configura el entorno:

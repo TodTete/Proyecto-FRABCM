@@ -52,7 +52,23 @@ Configura el entorno:
 
 ✅ Listo, ya podrás comenzar a usar SADDO.
 
+🧪 **Cómo probar la PWA en local y desde el celular**
+
+1. **Levanta un servidor local** sin depender de XAMPP (opcional, pero práctico para pruebas rápidas):
+   ```bash
+   php -S 0.0.0.0:8000 -t public
+   ```
+   Esto expone la aplicación en `http://localhost:8000` y la deja accesible desde otros dispositivos en la misma red.
+2. **Abre la app en tu navegador de escritorio** visitando `http://localhost:8000` (o la ruta que utilices con XAMPP). Verás la invitación para instalar la aplicación cuando el service worker se haya registrado correctamente.
+3. **Prueba la instalación como app de escritorio**: en Chrome o Edge selecciona el icono de "Instalar app" en la barra de direcciones y sigue los pasos.
+4. **Accede desde tu celular** conectado a la misma red Wi-Fi que tu equipo. Usa la IP local de tu computadora (ej. `http://192.168.0.10:8000`). Si usas XAMPP, asegúrate de permitir conexiones en el firewall y apunta a `http://<tu-ip-local>/public`.
+5. **Instala la PWA en Android/iOS**: abre la URL en Chrome (Android) o Safari (iOS). En Android el navegador mostrará un banner "Instalar aplicación" o el menú ⋮ → "Agregar a la pantalla principal". En iOS usa el botón de compartir → "Agregar a pantalla de inicio".
+6. **Prueba el modo offline**: una vez instalada y con la aplicación abierta al menos una vez, activa el modo avión. Deberías ver el contenido en caché y, en caso de navegar a una página no disponible, se mostrará `offline.html` como respaldo.
+
+> 💡 Consejo: para depurar el service worker abre las DevTools del navegador (F12) → pestaña "Application" → sección "Service Workers" y utiliza el botón "Update" o "Unregister" para forzar recargas.
+
 ---
+
 
 ✨ **Características**
 

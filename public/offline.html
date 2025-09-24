@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SADDO sin conexión</title>
+  <link rel="stylesheet" href="/project/public/assets/styles.css">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f7fb;
+      color: #0b3d91;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    img {
+      max-width: 180px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      color: #2f3b52;
+    }
+
+    button {
+      background: #0b3d91;
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #072a63;
+    }
+  </style>
+</head>
+<body>
+  <img src="/project/public/images/logo_saddo.png" alt="Logo SADDO">
+  <h1>Estás sin conexión</h1>
+  <p>La aplicación seguirá funcionando y sincronizará los cambios cuando recuperes internet.</p>
+  <button type="button" onclick="window.location.reload()">Reintentar</button>
+</body>
+</html>

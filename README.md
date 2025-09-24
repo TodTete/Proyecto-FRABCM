@@ -80,6 +80,7 @@ Configura el entorno:
 * Buscador avanzado con filtros personalizados
 * Panel de métricas y analítica de documentos
 * Internacionalización (multi-idioma)
+* Mejoras continuas para la experiencia PWA (notificaciones push, sincronización en segundo plano)
 
 ---
 

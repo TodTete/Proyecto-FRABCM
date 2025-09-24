@@ -3,13 +3,17 @@
     <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0b3d91" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="/project/public/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/project/public/images/logo_saddo.png">
     <title>Iniciar Sesión - UTTECAM</title>
     <link rel="stylesheet" href="/project/server/views/styles/var.css" />
     <link rel="stylesheet" href="/project/server/views/styles/main.css" />
     <link rel="stylesheet" href="/project/server/views/styles/login.css" />
     <link rel="icon" href="/project/public/images/logo.ico" type="image/ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="icon" href="/project/public/images/favicon.ico" type="image/x-icon">
     </head>
     <body>
 
@@ -109,6 +113,6 @@
     }, 2000); 
 });
 </script>
-
+<script defer src="/project/public/assets/pwa.js"></script>
 </body>
 </html>

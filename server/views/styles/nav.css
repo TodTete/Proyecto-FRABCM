@@ -3,6 +3,9 @@
     padding: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border-bottom: 3px solid #4a7c59;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .nav ul {
@@ -10,6 +13,7 @@
     display: flex;
     max-width: 1200px;
     margin: 0 auto;
+    flex: 1;
 }
 
 .nav li {
@@ -24,7 +28,6 @@
     padding: 1rem 2rem;
     text-align: center;
     border-bottom: 3px solid transparent;
-    
 }
 
 .nav a:hover,
@@ -33,3 +36,24 @@
     border-bottom-color: #ff8c42;
     color: #333;
 }
+
+.install-app-button {
+    margin-right: 1.5rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 9999px;
+    border: none;
+    background: linear-gradient(135deg, #0b3d91, #4a7c59);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.install-app-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11, 61, 145, 0.25);
+}
+
+.install-app-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;

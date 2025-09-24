@@ -1,0 +1,24 @@
+{
+  "name": "SADDO - Gestión de Documentos",
+  "short_name": "SADDO",
+  "description": "Sistema universitario para la administración de memorandos y notificaciones internas.",
+  "lang": "es-MX",
+  "start_url": "/project/public/login",
+  "scope": "/project/public/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b3d91",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/project/public/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/project/public/images/logo_saddo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

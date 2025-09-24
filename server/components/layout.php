@@ -8,6 +8,11 @@ function renderLayout($title, $content, $usuario, $page_title = '', $current_pag
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#0b3d91">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
+        <link rel="manifest" href="/project/public/manifest.webmanifest">
+        <link rel="apple-touch-icon" href="/project/public/images/logo_saddo.png">
         <title><?php echo $title; ?> - UTTECAM</title>
         <link rel="stylesheet" href="../server/assets/styles.css">
         <?php include __DIR__ . '/fontawesome.php'; ?>
@@ -39,6 +44,7 @@ function renderLayout($title, $content, $usuario, $page_title = '', $current_pag
                 }, 3000);
             }
         </script>
+        <script defer src="/project/public/assets/pwa.js"></script>
     </body>
     </html>
     <?php

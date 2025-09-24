@@ -14,4 +14,5 @@ $base_url_front = '/project/server/views/';
             <li><a href="<?php echo $base_url; ?>/usuarios" class="<?php echo $current_page === 'usuarios' ? 'active' : ''; ?>">Usuarios</a></li>
         <?php endif; ?>
     </ul>
+        <button type="button" class="install-app-button" data-install-app hidden>Instalar aplicación</button>
 </div>
